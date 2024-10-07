@@ -1,8 +1,14 @@
 import { Fragment } from "react/jsx-runtime"
 import Forms from "./components/Forms"
+import { useReducer } from "react"
+import { activityReducer, initialState } from "./reducers/activity-reduce"
+
+
 
 
 function App() {
+
+  const [state, dispatch]= useReducer(activityReducer, initialState)
   
   return (
     <Fragment>
@@ -15,10 +21,10 @@ function App() {
      </header>
 
      <section className="bg-lime-500 py-10 px-5">
-        <div className="max-w-3xl mx-auto">
-          <Forms>
-
-          </Forms>
+        <div className="max-w-4xl mx-auto">
+          <Forms
+            dispatch ={dispatch}
+          />
         </div>
      </section>
      

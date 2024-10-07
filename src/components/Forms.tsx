@@ -1,37 +1,54 @@
-import { ChangeEvent, FormEvent, useState } from "react"
+import { ChangeEvent, Dispatch, FormEvent, useState } from "react"
 import { categorias } from "../data/categorias"
 import { Activity } from "../type/Index"
+import { activityActions} from "../reducers/activity-reduce"
 
-export default function Forms(){
 
-    const [activity, setActivity]= useState<Activity>({
+type FormProps ={
+    dispatch: Dispatch<activityActions>
+}
+
+export default function Forms({dispatch}: FormProps){
+
+    const InitialState = {  
         category: 1,
         name: '',
         calories: 0
-    })
+    }
+
+    const [activity, setActivity] = useState<Activity>(InitialState)
 
     const HandlerChangeAccion = (e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>) =>{
 
-        const isnumbertField = ['category', 'calories'].includes(e.target.id)
+        //const isnumbertField = ['category', 'calories'].includes(e.target.id)
 
-        setActivity({...activity, [e.target.id]: isnumbertField?  +e.target.value : e.target.value})
+        setActivity({
+            ...activity,
+             [e.target.id]: e.target.value
+            //[e.target.id]: isnumbertField?  + e.target.value : e.target.value})
+        })
+          
     }
+    const isvalidActivity = () =>{
+        const {name, calories} = activity
+
+        return name.trim() !== '' && calories > 0
+   }
 
     const handleButtonClick =(e: FormEvent<HTMLFormElement>) =>{
        
         e.preventDefault()
 
+        dispatch({type: 'save-activity', payload: {newActivity : activity}})
+
         setShowAlert(true);
+        setActivity(InitialState)
 
     }
     
     const [showAlert, setShowAlert] = useState(false);
     
-    const isvalidActivity = () =>{
-         const {name, calories} = activity
-
-         return name.trim() !== '' && calories > 0
-    }
+   
 
     return(
         <form className="space-y-5 bg-white shadow p-10 rounded-xl" onSubmit={handleButtonClick}>
@@ -41,15 +58,14 @@ export default function Forms(){
                 <label htmlFor="categoria" className="font-bold">Categoria</label>
                 <select id="categoria" className=" border border-slate-300 p-2 rounded-lg w-full
                  bg-slate-200"
-                  value={activity.category}
-                  onChange={HandlerChangeAccion}
+                  value={InitialState.category}
+                 // onChange={HandlerChangeAccion}
                   >
 
                     {categorias.map(category =>(
                         <option key={category.id} 
-                                value={category.id}
-                                className="bg-lime-400"
-                            
+                               value={category.id}
+                                //className="bg-lime-400"
                                 >
                             {category.name}
                         </option>
