@@ -3,7 +3,8 @@ import { Activity } from "../type/Index"
 export type activityActions = 
     { type: 'save-activity', payload: { newActivity: Activity } } |
     {type: 'set-activityID', payload: { id: Activity['id'] } } |
-    {type: 'delete-activityID', payload: { id: Activity['id'] } } 
+    {type: 'delete-activityID', payload: { id: Activity['id'] } } |
+    {type: 'restart-app'} 
     
 
 export type ActivityState = {
@@ -60,6 +61,14 @@ export const activityReducer = (
         return{
             ...state,
            activities: state.activities.filter(activity => activity.id != accion.payload.id)
+        }
+    }
+
+    if(accion.type ==='restart-app'){
+        
+        return {
+            activities: [],
+            activeID:''
         }
     }
 

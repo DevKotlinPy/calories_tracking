@@ -23,7 +23,7 @@ export default function ActivityList( {activities, dispach}: ActivityListProps) 
         <h2 className='text-4xl font-bold text-slate-700 text-center'></h2>
 
         { activities.map(activity => (
-            <div key={activity.id} className='px-5 py-10 bg-white mt-5 flex justify-between'>
+            <div key={activity.id} className='px-5 py-10 bg-white mt-5 flex justify-between shadow-lg'>
                 <div className='space-y-2 relative'>
 
                     <p className= {`absolute -top-8 -left-5 px-10 py-2 text-white uppercase font-bold rounded-xl
@@ -41,7 +41,7 @@ export default function ActivityList( {activities, dispach}: ActivityListProps) 
                 </div>
                 <div className='flex gap-5 items-center'>
 
-                    <button 
+                    <button  
                         id='btnEdit'
                         onClick={() =>(dispach({type:"set-activityID", payload:{id: activity.id}}))}
                     >

@@ -71,7 +71,7 @@ export default function Forms({dispatch, state}: FormProps){
    
 
     return(
-        <form className="space-y-5 bg-white shadow p-10 rounded-xl" onSubmit={handleButtonClick}>
+        <form className="space-y-5 bg-white shadow p-10 rounded-xl shadow-lg" onSubmit={handleButtonClick}>
 
             <div className="grid grid-cols-1  gap-3">
 
