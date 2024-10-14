@@ -1,22 +1,34 @@
-import { ChangeEvent, Dispatch, FormEvent, useState } from "react"
+import { ChangeEvent, Dispatch, FormEvent, useEffect, useState } from "react"
+import { v4 as uuidV4 }  from "uuid"
+
 import { categorias } from "../data/categorias"
 import { Activity } from "../type/Index"
-import { activityActions} from "../reducers/activity-reduce"
+import { activityActions, ActivityState} from "../reducers/activity-reduce"
 
 
 type FormProps ={
-    dispatch: Dispatch<activityActions>
+    dispatch: Dispatch<activityActions>,
+    state: ActivityState
 }
 
-export default function Forms({dispatch}: FormProps){
+export default function Forms({dispatch, state}: FormProps){
 
-    const InitialState = {  
+    const InitialState: Activity = { 
+        id: uuidV4(), 
         category: 1,
         name: '',
         calories: 0
     }
 
     const [activity, setActivity] = useState<Activity>(InitialState)
+
+    useEffect(() =>{
+        if(state.activeID){
+            const selectActivity = state.activities.filter(stateActivity => stateActivity.id === state.activeID)[0]
+
+            setActivity(selectActivity)
+        }
+    }, [state.activeID])
 
     const HandlerChangeAccion = (e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>) =>{
 
@@ -42,7 +54,15 @@ export default function Forms({dispatch}: FormProps){
         dispatch({type: 'save-activity', payload: {newActivity : activity}})
 
         setShowAlert(true);
-        setActivity(InitialState)
+       // se esta reset
+        setActivity({
+            ...InitialState,
+             id: uuidV4()
+        })
+
+        setTimeout(() => {
+            setShowAlert(false)
+        }, 3000);
 
     }
     
@@ -55,18 +75,18 @@ export default function Forms({dispatch}: FormProps){
 
             <div className="grid grid-cols-1  gap-3">
 
-                <label htmlFor="categoria" className="font-bold">Categoria</label>
-                <select id="categoria" className=" border border-slate-300 p-2 rounded-lg w-full
+                <label htmlFor="category" className="font-bold">Categoria</label>
+                <select id="category" className=" border border-slate-300 p-2 rounded-lg w-full
                  bg-slate-200"
-                  value={InitialState.category}
-                 // onChange={HandlerChangeAccion}
+                  value={activity.category}
+                  onChange={HandlerChangeAccion}
                   >
 
                     {categorias.map(category =>(
                         <option key={category.id} 
                                value={category.id}
                                 //className="bg-lime-400"
-                                >
+                         >
                             {category.name}
                         </option>
                     )) }
@@ -90,7 +110,7 @@ export default function Forms({dispatch}: FormProps){
 
                 <input id="calories"
                     type="number"
-                    placeholder="Registra" 
+                    placeholder="Registra las calorias de tus accines" 
                     className="border border-slate-300 p-2 rounded-lg w-full bg-slate-200"
                     value={activity.calories}
                     onChange={HandlerChangeAccion}
@@ -102,11 +122,11 @@ export default function Forms({dispatch}: FormProps){
                 className=" bg-lime-500  hover:bg-orange-600 w-full p-2 font-bold uppercase
                  text-white rounded-lg 
                     cursor-pointer  disabled:opacity-10 disabled:hover:bg-lime-500" 
-                  value={activity.category === 1 ? 'Guardar Comida' : 'Guardar Ejercicio'}
+                  value={activity.category > 3 ? 'Guardar Comida' : 'Guardar Ejercicio'}
                   disabled={!isvalidActivity()}
                   //onClick={handleButtonClick}
                 
-               
+                
            />
 
            {showAlert && (

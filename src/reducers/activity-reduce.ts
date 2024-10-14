@@ -1,16 +1,25 @@
 import { Activity } from "../type/Index"
 
-export type activityActions = {
-    type: 'save-activity', payload: { newActivity: Activity}
-     
+export type activityActions = 
+    { type: 'save-activity', payload: { newActivity: Activity } } |
+    {type: 'set-activityID', payload: { id: Activity['id'] } } |
+    {type: 'delete-activityID', payload: { id: Activity['id'] } } 
+    
+
+export type ActivityState = {
+    activities: Activity[],
+    activeID: Activity['id'] //lookup
 }
 
-type ActivityState = {
-    activitie: Activity[]
+const localStorageActivity = () : Activity[] =>{
+    const activities = localStorage.getItem("activities")
+
+    return activities ? JSON.parse(activities) : []
 }
 
 export const initialState: ActivityState = {
-    activitie: []
+    activities: localStorageActivity(),
+    activeID: ''
 }
 
 
@@ -18,13 +27,39 @@ export const activityReducer = (
     state: ActivityState = initialState,
     accion: activityActions
 ) => {
+
     if (accion.type === 'save-activity'){
+
         //este codigo maneja la logica
-        console.log("Hola ")
+        let updateActivities: Activity[] = []
+
+        if(state.activeID){
+            updateActivities = state.activities.map( activity => activity.id === state.activeID ? accion.payload.newActivity: activity)
+        } else {
+
+            updateActivities = [...state.activities, accion.payload.newActivity]
+        }
 
         return{
             ...state,  
-            activities: [...state.activitie, accion.payload.newActivity]
+            activities: updateActivities,
+            activeID: ''
+        }
+    }
+
+    if(accion.type === 'set-activityID'){
+
+        return{
+            ...state,
+            activeID: accion.payload.id
+        }
+    }
+
+    if(accion.type === 'delete-activityID'){
+
+        return{
+            ...state,
+           activities: state.activities.filter(activity => activity.id != accion.payload.id)
         }
     }
 

@@ -1,14 +1,18 @@
+import { useEffect, useReducer } from "react"
 import { Fragment } from "react/jsx-runtime"
 import Forms from "./components/Forms"
-import { useReducer } from "react"
 import { activityReducer, initialState } from "./reducers/activity-reduce"
-
+import ActivityList from "./components/ActivityList"
 
 
 
 function App() {
 
   const [state, dispatch]= useReducer(activityReducer, initialState)
+
+  useEffect(()=>{
+    localStorage.setItem('activities', JSON.stringify(state.activities))
+  }, [state.activities])
   
   return (
     <Fragment>
@@ -24,10 +28,17 @@ function App() {
         <div className="max-w-4xl mx-auto">
           <Forms
             dispatch ={dispatch}
+            state = {state}
           />
         </div>
      </section>
      
+    <section className="p-10 mx-auto max-w-4xl">
+        <ActivityList
+          activities={state.activities}
+          dispach={dispatch}
+        />
+   </section>
     </Fragment>
     
   )
